@@ -1,0 +1,151 @@
+[
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
+        "label": "sleep",
+        "importPath": "time",
+        "description": "time",
+        "isExtraImport": true,
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Set",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "defaultdict",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "SITE",
+        "kind": 5,
+        "importPath": "get_ec_classes",
+        "description": "get_ec_classes",
+        "peekOfCode": "SITE = \"https://www.kegg.jp/kegg/annotation/br01800.html\"\nimport requests\n# Fetch the website SITE and retrieve the HTML table \ndata = requests.get(SITE).text\n# Grab all text between <table> and </table> and store it in a list\nl = data.split(\"<table>\")[1].split(\"</table>\")[0].split(\"\\n\")\nprint(l[10])",
+        "detail": "get_ec_classes",
+        "documentation": {}
+    },
+    {
+        "label": "data",
+        "kind": 5,
+        "importPath": "get_ec_classes",
+        "description": "get_ec_classes",
+        "peekOfCode": "data = requests.get(SITE).text\n# Grab all text between <table> and </table> and store it in a list\nl = data.split(\"<table>\")[1].split(\"</table>\")[0].split(\"\\n\")\nprint(l[10])",
+        "detail": "get_ec_classes",
+        "documentation": {}
+    },
+    {
+        "label": "l",
+        "kind": 5,
+        "importPath": "get_ec_classes",
+        "description": "get_ec_classes",
+        "peekOfCode": "l = data.split(\"<table>\")[1].split(\"</table>\")[0].split(\"\\n\")\nprint(l[10])",
+        "detail": "get_ec_classes",
+        "documentation": {}
+    },
+    {
+        "label": "construct_url",
+        "kind": 2,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "def construct_url(rid : str) -> str:\n    return ROOT_URL + \"?rn:\" + rid\ndef parse_html_to_rclass(html : str) -> Set[str]:\n    # construct a regex that matches a <tr> tag containing a class attribute that contains the <th> tag with a <span> that says \"Reaction class\"\n    rclass_regex = r'<tr>\\s*<th class=\\\"[\\w\\s]*\\\">\\s*<span class=\\\"[\\w\\s]*\\\">Reaction class</span>\\s*</th>(.*?)</table></td></tr>'\n    rclass_match = re.search(rclass_regex, html, re.DOTALL)\n    if rclass_match:\n        # extract all text that starts with RC and contains numbers\n        rclass = re.findall(r\"RC\\d+\", rclass_match.group(1))\n        return set(rclass)",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    },
+    {
+        "label": "parse_html_to_rclass",
+        "kind": 2,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "def parse_html_to_rclass(html : str) -> Set[str]:\n    # construct a regex that matches a <tr> tag containing a class attribute that contains the <th> tag with a <span> that says \"Reaction class\"\n    rclass_regex = r'<tr>\\s*<th class=\\\"[\\w\\s]*\\\">\\s*<span class=\\\"[\\w\\s]*\\\">Reaction class</span>\\s*</th>(.*?)</table></td></tr>'\n    rclass_match = re.search(rclass_regex, html, re.DOTALL)\n    if rclass_match:\n        # extract all text that starts with RC and contains numbers\n        rclass = re.findall(r\"RC\\d+\", rclass_match.group(1))\n        return set(rclass)\n    return set()\ndef get_rclass(rid : str) -> Optional[Set[str]]:",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    },
+    {
+        "label": "get_rclass",
+        "kind": 2,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "def get_rclass(rid : str) -> Optional[Set[str]]:\n    url = construct_url(rid)\n    r = requests.get(url)\n    if r.status_code == 200:\n        return parse_html_to_rclass(r.text)\n    else:\n        return None\ndef rids_to_rclasses(rids : Set[str]) -> defaultdict:\n    rclasses = defaultdict(set)\n    for rid in tqdm.tqdm(rids):",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    },
+    {
+        "label": "rids_to_rclasses",
+        "kind": 2,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "def rids_to_rclasses(rids : Set[str]) -> defaultdict:\n    rclasses = defaultdict(set)\n    for rid in tqdm.tqdm(rids):\n        sleep(0.5)\n        rclass = get_rclass(rid)\n        if rclass:\n            for rc in rclass:\n                rclasses[rc].add(rid)\n    return rclasses\ndef main(rids_file : str) -> None:",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "def main(rids_file : str) -> None:\n    rids = set()\n    with open(rids_file, \"r\") as f:\n        for line in f:\n            rids.add(line.strip())\n    rclasses = rids_to_rclasses(rids)\n    with open(\"rclasses.txt\", \"w\") as f:\n        for rc in rclasses:\n            f.write(rc + \"\\t\" + \" \".join(rclasses[rc]) + \"\\n\")\nif __name__ == \"__main__\":",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    },
+    {
+        "label": "ROOT_URL",
+        "kind": 5,
+        "importPath": "get_rid_to_rclass",
+        "description": "get_rid_to_rclass",
+        "peekOfCode": "ROOT_URL = \"https://www.genome.jp/dbget-bin/www_bget\"\ndef construct_url(rid : str) -> str:\n    return ROOT_URL + \"?rn:\" + rid\ndef parse_html_to_rclass(html : str) -> Set[str]:\n    # construct a regex that matches a <tr> tag containing a class attribute that contains the <th> tag with a <span> that says \"Reaction class\"\n    rclass_regex = r'<tr>\\s*<th class=\\\"[\\w\\s]*\\\">\\s*<span class=\\\"[\\w\\s]*\\\">Reaction class</span>\\s*</th>(.*?)</table></td></tr>'\n    rclass_match = re.search(rclass_regex, html, re.DOTALL)\n    if rclass_match:\n        # extract all text that starts with RC and contains numbers\n        rclass = re.findall(r\"RC\\d+\", rclass_match.group(1))",
+        "detail": "get_rid_to_rclass",
+        "documentation": {}
+    }
+]
